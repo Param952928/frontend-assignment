@@ -26,11 +26,15 @@ app.use(bodyParser.json());
 
 app.enable('trust proxy');
 
-app.get('/api/fetchStockData', (req, res) => {
+app.post('/api/fetchStockData', (req, res) => {
+
+  console.log("data", req.body)
 const polygonApiKey = 'Cuy2hjZ5kQQo23SzedEcN8FMbAnVYTaU';
 
-const stockSymbol = 'AAPL';
-const date = '2023-07-26';
+// const stockSymbol = 'AAPL';
+const stockSymbol = req.body.stockSymbol;
+// const date = '2023-07-26';
+const date = req.body.date;
 
 const apiUrl = `https://api.polygon.io/v1/open-close/${stockSymbol}/${date}?apiKey=${polygonApiKey}`;
 
@@ -48,13 +52,14 @@ axios.get(apiUrl)
     console.log('Low Price:', low);
     console.log('Close Price:', close);
     console.log('Volume:', volume);
+    // res.sendStatus(200);
+    res.send({open, high, low, close, volume})
   })
   .catch(error => {
     console.error('Error fetching trade statistics:', error.message);
   });
 
-    res.sendStatus(200);
-    res.send({open, high, low, close, volume})
+    
 });
 
 const port = process.env.PORT || 5000;
